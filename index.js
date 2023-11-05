@@ -38,7 +38,18 @@ async function run() {
     // create collection for store book
     const books = bookDB.collection("allBooks");
    
-   
+  
+  // All get methods 
+  
+  // get all Books
+  app.get("/books",async(req,res)=>{
+    const allBooks = await books.find().toArray();
+     res.status(200).send(allBooks)
+
+  })
+
+
+
 
 
 // All Post Method strat from here
