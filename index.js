@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require('cors')
-
+const ObjectId = require('mongodb').ObjectId;
 
 
 // middleWare
@@ -28,6 +28,7 @@ const client = new MongoClient(uri, {
 });
 
 
+
 // DATA BASE CONNECTION
 async function run() {
   try {
@@ -37,7 +38,9 @@ async function run() {
     const bookDB = client.db("books");
     // create collection for store book
     const books = bookDB.collection("allBooks");
-   
+
+    // create collection for users
+    const users = bookDB.collection("users")
   
   // All get methods 
   
@@ -48,13 +51,27 @@ async function run() {
 
   })
 
+  // get single books
+
+  app.get("/bookdetails/:id",async(req,res)=>{
+     const id = req.params.id;
+     const query = {_id : new ObjectId(id)}
+     const book =await books.findOne(query)
+     res.status(200).send(book)
+  })
+
 
 
 
 
 // All Post Method strat from here
 
-
+// create user
+app.post("/users",async(req,res)=>{
+   const userInfo= req.body;
+    const user = await users.insertOne(userInfo);
+    res.status(201),send(user)
+})
 // Create Book 
 
 app.post("/createbook",async(req,res)=>{
