@@ -73,9 +73,21 @@ async function run() {
      res.status(200).send(book)
   })
 
+// get a single books for reading
+app.get("/readbook/:id",async(req,res)=>{
+  const id = req.params.id;
+  const query = {_id : new ObjectId(id)}
+  const book =await books.findOne(query)
+  res.status(200).send(book)
+})
 
-
-
+// get all borrowed books by user
+app.get("/borrowedbook",async(req,res)=>{
+   const email = req.query.email;
+   const query = {userEmail : email};
+   const yourBorrowedBooks = await borrowedBooks.find(query).toArray();
+   res.status(200).send( yourBorrowedBooks)
+})
 
 // All Post Method start from here
 
