@@ -42,12 +42,25 @@ async function run() {
     // create collection for users
     const users = bookDB.collection("users")
   
+    // create collectoon for borrowed books
+    const borrowedBooks = bookDB.collection("borrowedbooks")
+
+
   // All get methods 
   
   // get all Books
-  app.get("/books",async(req,res)=>{
-    const allBooks = await books.find().toArray();
-     res.status(200).send(allBooks)
+  app.get("/books/:category",async(req,res)=>{
+    const query = req.params.category;
+    if(query==="allbooks"){
+      const allBooks = await books.find().toArray();
+      res.status(200).send(allBooks)
+    }else{
+      // get books depends on book categoy
+       const bookstype = req.params.category
+       const query = {category : bookstype}
+       const categoryBook = await books.find(query).toArray()
+       res.status(200).send(categoryBook)
+    }
 
   })
 
@@ -64,7 +77,7 @@ async function run() {
 
 
 
-// All Post Method strat from here
+// All Post Method start from here
 
 // create user
 app.post("/users",async(req,res)=>{
@@ -78,6 +91,30 @@ app.post("/createbook",async(req,res)=>{
      const bookInfo = req.body;
      const book = await books.insertOne(bookInfo);
      res.status(201).send(book)
+})
+
+// borrowed books list 
+app.post("/books/borrowedbooks",async(req,res)=>{
+   const borrowedBooksData = req.body;
+   const query ={bookName :borrowedBooksData.bookName };
+
+   // checking books already borrowed or not
+   const booksAlredayInBorrowdBooks = await borrowedBooks.findOne(query);
+  
+   // if books not borrowed yet thrn we insert in db
+  if(!booksAlredayInBorrowdBooks){
+      const borrowedBook = await borrowedBooks.insertOne(borrowedBooksData);
+      res.status(201).send(borrowedBook)
+    
+    }
+    // if books alreday borrowed we send a messege
+    if(booksAlredayInBorrowdBooks){
+      res.send("you alreday borrowed the book")
+    }
+      
+     
+  
+   
 })
 
 app.listen(port,()=>{
