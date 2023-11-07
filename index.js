@@ -51,6 +51,7 @@ async function run() {
   // get all Books
   app.get("/books/:category",async(req,res)=>{
     const query = req.params.category;
+    
     if(query==="allbooks"){
       const allBooks = await books.find().toArray();
       res.status(200).send(allBooks)
@@ -112,15 +113,16 @@ app.post("/books/borrowedbooks",async(req,res)=>{
 
    // checking books already borrowed or not
    const booksAlredayInBorrowdBooks = await borrowedBooks.findOne(query);
-  
+   
+  // console.log(booksAlredayInBorrowdBooks.userEmail===borrowedBooksData.userEmail)
    // if books not borrowed yet thrn we insert in db
-  if(!booksAlredayInBorrowdBooks){
+  if(booksAlredayInBorrowdBooks.userEmail !== borrowedBooksData.userEmail){
       const borrowedBook = await borrowedBooks.insertOne(borrowedBooksData);
       res.status(201).send(borrowedBook)
     
     }
     // if books alreday borrowed we send a messege
-    if(booksAlredayInBorrowdBooks){
+    if(booksAlredayInBorrowdBooks.userEmail === borrowedBooksData.userEmail){
       res.send("you alreday borrowed the book")
     }
       
