@@ -46,6 +46,20 @@ async function run() {
     const borrowedBooks = bookDB.collection("borrowedbooks")
 
 
+
+ // delete book from borrowed book  
+    app.delete("/bookreturn/:id",async(req,res)=>{
+      const id = req.params.id;
+      const query = {_id : new ObjectId(id)}
+      const data = await borrowedBooks.deleteOne(query)
+      console.log(data)
+    })
+
+
+
+
+
+
   // All get methods 
   
   // get all Books
@@ -69,6 +83,7 @@ async function run() {
 
   app.get("/bookdetails/:id",async(req,res)=>{
      const id = req.params.id;
+    
      const query = {_id : new ObjectId(id)}
      const book =await books.findOne(query)
      res.status(200).send(book)
@@ -87,7 +102,7 @@ app.get("/borrowedbook",async(req,res)=>{
    const email = req.query.email;
    const query = {userEmail : email};
    const yourBorrowedBooks = await borrowedBooks.find(query).toArray();
-   res.status(200).send( yourBorrowedBooks)
+   res.status(200).send(yourBorrowedBooks)
 })
 
 // All Post Method start from here
@@ -109,25 +124,31 @@ app.post("/createbook",async(req,res)=>{
 // borrowed books list 
 app.post("/books/borrowedbooks",async(req,res)=>{
    const borrowedBooksData = req.body;
-   const query ={bookName :borrowedBooksData.bookName };
-
+  
+   const query ={bookName :borrowedBooksData.bookName,userEmail:borrowedBooksData.userEmail};
+  
    // checking books already borrowed or not
    const booksAlredayInBorrowdBooks = await borrowedBooks.findOne(query);
-   
-  // console.log(booksAlredayInBorrowdBooks.userEmail===borrowedBooksData.userEmail)
+ 
+  
    // if books not borrowed yet thrn we insert in db
-  if(booksAlredayInBorrowdBooks.userEmail !== borrowedBooksData.userEmail){
+  if(booksAlredayInBorrowdBooks===null || booksAlredayInBorrowdBooks.userEmail !== borrowedBooksData.userEmail){
       const borrowedBook = await borrowedBooks.insertOne(borrowedBooksData);
       res.status(201).send(borrowedBook)
-    
+    return
     }
-    // if books alreday borrowed we send a messege
-    if(booksAlredayInBorrowdBooks.userEmail === borrowedBooksData.userEmail){
+    if((booksAlredayInBorrowdBooks.userEmail === borrowedBooksData.userEmail)){
       res.send("you alreday borrowed the book")
     }
-      
-     
+   // if books alreday borrowed we send a messege
+    // Patch method
+ app.patch("/edit",(req,res)=>{
+   console.log("edit")
+ })  
+
+
   
+
    
 })
 
