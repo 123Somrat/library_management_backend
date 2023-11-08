@@ -83,7 +83,6 @@ async function run() {
 
   app.get("/bookdetails/:id",async(req,res)=>{
      const id = req.params.id;
-    
      const query = {_id : new ObjectId(id)}
      const book =await books.findOne(query)
      res.status(200).send(book)
@@ -104,6 +103,15 @@ app.get("/borrowedbook",async(req,res)=>{
    const yourBorrowedBooks = await borrowedBooks.find(query).toArray();
    res.status(200).send(yourBorrowedBooks)
 })
+
+// get a books depens on search
+app.get("/availablebooks",async(req,res)=>{
+   const query = { quantity :  {$gt: 0 }}
+   const availablebooks = await books.find(query).toArray()
+   res.status(200).send(availablebooks)
+})
+
+
 
 // All Post Method start from here
 
