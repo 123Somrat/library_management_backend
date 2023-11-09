@@ -58,9 +58,7 @@ async function run() {
 
 // update Book quabtity
 app.patch("/decrementbookquantity/:id",async(req,res)=>{
-  console.log(req.method)
   const id = req.params.id;
-  console.log(id)
   const query = {_id : new ObjectId(id)}
   const data = req.body.quantity;
    const updatedBookQuantity =await books.updateOne(query,{
