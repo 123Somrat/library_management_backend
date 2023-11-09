@@ -4,13 +4,22 @@ const app = express();
 const cors = require('cors')
 const ObjectId = require('mongodb').ObjectId;
 
-
+const cosrsOptions = ["http://127.0.0.1:5173"]
 // middleWare
 app.use(express.json())
 app.use(cors())
 const port =process.env.PORT;
 
+// user role checking middleWare
 
+const hasPermission = async (req,res,next) =>{
+     const userRole =  req.body.User.role;
+     if(userRole==="librarian"){
+        next()
+     }else{
+       await res.status(403).send( "UnAuthorized")
+     }
+}
 
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
@@ -47,14 +56,30 @@ async function run() {
 
 
 
+// update Book quabtity
+app.patch("/decrementbookquantity/:id",async(req,res)=>{
+  console.log(req.method)
+  const id = req.params.id;
+  console.log(id)
+  const query = {_id : new ObjectId(id)}
+  const data = req.body.quantity;
+   const updatedBookQuantity =await books.updateOne(query,{
+       $set : {
+         quantity : data - 1
+       }
+   });
+   res.send(updatedBookQuantity)
+ })
+
+
+
  // delete book from borrowed book  
     app.delete("/bookreturn/:id",async(req,res)=>{
       const id = req.params.id;
       const query = {_id : new ObjectId(id)}
       const data = await borrowedBooks.deleteOne(query)
-      console.log(data)
+      res.status(200).send(data)
     })
-
 
 
 
@@ -113,7 +138,8 @@ app.get("/availablebooks",async(req,res)=>{
 
 
 
-// All Post Method start from here
+// All Post Method start from here .
+
 
 // create user
 app.post("/users",async(req,res)=>{
@@ -121,9 +147,9 @@ app.post("/users",async(req,res)=>{
     const user = await users.insertOne(userInfo);
     res.status(201),send(user)
 })
-// Create Book 
 
-app.post("/createbook",async(req,res)=>{
+// Create Book 
+app.post("/createbook",hasPermission,async(req,res)=>{
      const bookInfo = req.body;
      const book = await books.insertOne(bookInfo);
      res.status(201).send(book)
@@ -149,12 +175,10 @@ app.post("/books/borrowedbooks",async(req,res)=>{
       res.send("you alreday borrowed the book")
     }
    // if books alreday borrowed we send a messege
-    // Patch method
- app.patch("/edit",(req,res)=>{
-   console.log("edit")
- })  
+   
+  // Patch method
 
-
+ 
   
 
    
