@@ -61,6 +61,18 @@ async function run() {
 
 
 // update Book quantity after borrowed a book
+app.patch("/decrementbookquantity/:id",async(req,res)=>{
+  const id = req.params.id;
+  const query = {_id : new ObjectId(id)}
+  const booksQuantity= req.body.quantity;
+   const updatedBookQuantity =await books.updateOne(query,{
+       $set : {
+         quantity : booksQuantity - 1
+       }
+   });
+   res.send({quantity : booksQuantity - 1})
+ })
+
 
 
 
