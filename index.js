@@ -73,7 +73,20 @@ app.patch("/decrementbookquantity/:id",async(req,res)=>{
    res.send({quantity : booksQuantity - 1})
  })
 
+ //updatedBookQuantity after return the book
+ app.patch("/incrementbookquantity/:id",async(req,res)=>{
 
+  const bookName = req.body.bookName;
+  //const query = {_id : new ObjectId(id)}
+  const query = {bookName : bookName}
+  const booksQuantity= req.body.quantity;
+   const updatedBookQuantity =await books.updateOne(query,{
+       $set : {
+        quantity : booksQuantity + 1
+       }
+   });
+   res.send({quantity : booksQuantity + 1})
+ })
 
 
 
