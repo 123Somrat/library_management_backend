@@ -11,14 +11,18 @@ app.use(cors())
 const port =process.env.PORT;
 
 // user role checking middleWare
-
 const hasPermission = async (req,res,next) =>{
-     const userRole =  req.body.User.role;
-     if(userRole==="librarian"){
-        next()
+     const userEmail =  req.body.User.email;
+   
+     if(userEmail==="sam@gmail.com"){
+        const setRole = req.body.User.role="librarian";
+        if(setRole==="librarian"){
+          next()
+         }
      }else{
-       await res.status(403).send( "UnAuthorized")
-     }
+      await res.status(403).send( "UnAuthorized")
+    }
+   
 }
 
 
@@ -56,18 +60,10 @@ async function run() {
 
 
 
-// update Book quabtity
-app.patch("/decrementbookquantity/:id",async(req,res)=>{
-  const id = req.params.id;
-  const query = {_id : new ObjectId(id)}
-  const data = req.body.quantity;
-   const updatedBookQuantity =await books.updateOne(query,{
-       $set : {
-         quantity : data - 1
-       }
-   });
-   res.send(updatedBookQuantity)
- })
+// update Book quantity after borrowed a book
+
+
+
 
 
 
