@@ -129,7 +129,11 @@ app.patch("/decrementbookquantity/:id",async(req,res)=>{
      const id = req.params.id;
      const query = {_id : new ObjectId(id)}
      const book =await books.findOne(query)
-     res.status(200).send(book)
+      const getAllBookFromSameType = {category:book.category};
+      // get all others books which is belongs to specific category
+      const allBooksFromSameBookType =await books.find(getAllBookFromSameType).toArray()
+      const sendAllBooks = allBooksFromSameBookType.filter(books=>books.bookName!==book.bookName);
+      res.status(200).send({book,sendAllBooks})
   })
 
 // get a single books for reading
