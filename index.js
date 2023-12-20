@@ -22,7 +22,7 @@ const hasPermission = async (req,res,next) =>{
      }else{
       await res.status(403).send( "UnAuthorized")
     }
-   
+  
 }
 
 
@@ -168,7 +168,7 @@ app.get("/availablebooks",async(req,res)=>{
 app.post("/users",async(req,res)=>{
    const userInfo= req.body;
     const user = await users.insertOne(userInfo);
-    res.status(201),send(user)
+    res.status(201).send(user)
 })
 
 // Create Book 
