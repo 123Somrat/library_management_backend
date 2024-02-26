@@ -109,7 +109,6 @@ app.patch("/decrementbookquantity/:id",async(req,res)=>{
   // get all Books
   app.get("/books/:category",async(req,res)=>{
     const query = req.params.category;
-  
     if(query==="allbooks"){
       const allBooks = await books.find().toArray();
       res.status(200).send(allBooks)
@@ -154,6 +153,7 @@ app.get("/borrowedbook",async(req,res)=>{
 
 // get a books depens on search
 app.get("/availablebooks",async(req,res)=>{
+
    const query = { quantity :  {$gt: 0 }}
    const availablebooks = await books.find(query).toArray()
    res.status(200).send(availablebooks)
