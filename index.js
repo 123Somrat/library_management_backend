@@ -152,7 +152,7 @@ app.get("/borrowedbook",async(req,res)=>{
 })
 
 // get a books depens on search
-app.get("/availablebooks",async(req,res)=>{
+app.get("books/availablebooks",async(req,res)=>{
 
    const query = { quantity :  {$gt: 0 }}
    const availablebooks = await books.find(query).toArray()
